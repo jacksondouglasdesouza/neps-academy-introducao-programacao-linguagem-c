@@ -1,0 +1,13 @@
+# Ignorar todos os executáveis
+*.exe
+
+# Ignorar arquivos de backup temporários do VS Code
+*.vscode/
+
+# Ignorar arquivos compilados (gcc, clang, etc.)
+*.out
+*.o
+
+# Ignorar arquivos temporários do sistema
+.DS_Store
+Thumbs.db
