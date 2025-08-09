@@ -2,7 +2,7 @@
 *.exe
 
 # Ignorar arquivos de backup temporários do VS Code
-*.vscode/
+.vscode/
 
 # Ignorar arquivos compilados (gcc, clang, etc.)
 *.out

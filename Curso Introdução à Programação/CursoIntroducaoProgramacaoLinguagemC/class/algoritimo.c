@@ -5,7 +5,7 @@ int main(){
 
     /*Algoritmo para calcular a média de um aluno
 
-    Anote a primeira nota;
+    Anote a primeira nota; 
 
     Anote a segunda nota;
 
