@@ -92,12 +92,7 @@ double multiplicacao(double a, double b) {
 }
 
 double divisao(double a, double b) {
-    if (b != 0) {
-        return a / b;
-    } else {
-        printf("Erro: Divisao por zero nao é permitida.\n");
-        return 0;
-    }
+    return a / b;
 }
 
 void limpezaBuffer(){
@@ -113,12 +108,63 @@ void limparTela() {
     #endif
 }
 
-//
+
+/* Buscar Correção para a função na próxima versão, descansar por hoje chega!
+
+double EntradaNumero(const char* mensagem) {
+    char buffer[100];
+    double numero;
+    char *pontoFinal;
+
+    while(1){
+        printf("%s", mensagem);
+
+        if(fgets(buffer, sizeof(buffer), stdin) == NULL){
+            printf("Erro na leitura. Tente novamente.\n");
+            continue;
+        }
+
+        buffer[strcspn(buffer, "\n")] = 0; 
+
+        char *ponteiroVirgula = strchr(buffer, ',');
+
+        if(ponteiroVirgula != NULL){
+            char bufferLimpo[100];
+            int j = 0;
+
+            for(int i = 0; buffer[i] != '\0'; i++){
+                if(buffer[i] != '.'){
+                    if(buffer[i] == ','){
+                        bufferLimpo[j++] = '.';
+                    } else {
+                        bufferLimpo[j++] = buffer[i];
+                    }
+                }
+            }
+        }
+
+        bufferLimpo[j] = '\0';
+
+        if(bufferLimpo[0] != '\0' && *pontoFinal == '\0'){
+            return numero;
+        } else {
+            numero = strtod(buffer, &pontoFinal);
+
+            if(buffer[0] != '\0' && *pontoFinal == '\0'){
+                return numero;
+            }
+        }
+        printf("Entrada invalida. Por favor, insira um numero valido.\n");
+    }
+    
+} */
+
+//-- Função Principal
 
 
 int main(void) {
 
-    setlocale(LC_ALL, "pt_BR.UTF-8");
+    setlocale(LC_ALL, "pt_br.UTF-8");
 
     double numero1, numero2;
     char continuar = 's';
@@ -138,69 +184,75 @@ int main(void) {
         printf("4. Divisão\n");
         printf("5. Sair\n");
         printf("Opção: ");
-        scanf("%d", &opcao);
 
         if(scanf("%d", &opcao) != 1){
-            printf("Entrada inválida. Por favor, insira um número inteiro.\n");
+            printf("Entrada inválida. Por favor, insira um número entre 1 e 5.\n");
             limpezaBuffer();
-            opcao = 0;
+            //opcao = 0;
+            printf("Pressione Enter para continuar...");
+            getchar();
+            continue;
         }
 
-        if(opcao < 1 || opcao > 5 || (opcao != (int)opcao)){
-            printf("Opção inválida. Selecione uma opção válida entre 1 e 5.\n");
+        limpezaBuffer();
+
+        if(opcao == 5){
+            continuar = 'n';
+            continue;
+        }
+
+        if(opcao < 1 || opcao > 5){
+            printf("Entrada inválida. Por favor, insira um número entre 1 e 5.\n");
+            limpezaBuffer();
+            printf("Pressione Enter para continuar...");
+            getchar();
         } else {
-            switch((int)opcao){
+
+            numero1 = EntradaNumero("Digite o primeiro numero: \n");
+            numero2 = EntradaNumero("Digite o segundo numero: \n");
+
+            switch(opcao){
                 case 1:
-                    printf("Digite o primeiro número: ");
-                    scanf("%d", &numero1);
-                    printf("Digite o segundo número: ");
-                    scanf("%d", &numero2);
-                    printf("Resultado: %d + %d = %d\n", numero1, numero2, soma(numero1, numero2));
+                    printf("Resultado: %.2lf + %.2lf = %.2lf\n", numero1, numero2, soma(numero1, numero2));
                     break;
                 case 2:
-                    printf("Digite o primeiro número: ");
-                    scanf("%d", &numero1);
-                    printf("Digite o segundo número: ");
-                    scanf("%d", &numero2);
-                    printf("Resultado: %d - %d = %d\n", numero1, numero2, subtracao(numero1, numero2));
+                    printf("Resultado: %.2lf - %.2lf = %.2lf\n", numero1, numero2, subtracao(numero1, numero2));
                     break;
                 case 3:
-                    printf("Digite o primeiro número: ");
-                    scanf("%d", &numero1);
-                    printf("Digite o segundo número: ");
-                    scanf("%d", &numero2);
-                    printf("Resultado: %d * %d = %d\n", numero1, numero2,  multiplicacao(numero1, numero2));
+                    printf("Resultado: %.2lf * %.2lf = %.2lf\n", numero1, numero2, multiplicacao(numero1, numero2));
                     break;
                 case 4:
-                    printf("Digite o primeiro número: ");
-                    scanf("%d", &numero1);
-                    printf("Digite o segundo número: ");
-                    scanf("%d", &numero2);
-                    printf("Resultado: %d / %d = %.2lf", numero1, numero2, divisao(numero1, numero2));
-                    break;
-                case 5:
-                    printf("Saindo da calculadora...\n");
+                    if(numero2 != 0){
+                        printf("Resultado: %.2lf / %.2lf = %.2lf\n", numero1, numero2, divisao(numero1, numero2));
+                    } else {
+                        printf("Erro: Divisao por zero nao é permitida.\n");
+                    }
                     break;
             }
-
-            char continuar;
-
-            printf("Deseja realizar outra operação? (s/n): ");
-            scanf(" %c", &continuar);
-
-            continuar = tolower(continuar);
-
-            if(continuar != 's' && continuar != 'n') {
-                printf("Resposta inválida. Por favor, responda com 's' ou 'n'.\n");
-                continuar = 's';
-            } else {
-                printf("Obrigado por usar a calculadora! Ate a proxima.\n");
-            }
-    
         }
+        
+        //-- 
 
-    } while ((int)opcao != 5);
+            char respostaParaContinuar;
 
+            do{
+                printf("Deseja realizar outra operação? (s/n): \n");
+
+                scanf(" %c", &respostaParaContinuar);
+                limpezaBuffer();
+
+                respostaParaContinuar = tolower(respostaParaContinuar);
+
+                if(respostaParaContinuar == 's' || respostaParaContinuar == 'n'){
+                    continuar = respostaParaContinuar;
+                } else{
+                    printf("Resposta inválida. Digite 's' para sim ou 'n' para não.\n");
+                }
+            } while(respostaParaContinuar != 's' && respostaParaContinuar != 'n');
+
+    } while (continuar == 's');
+
+    printf("Obrigado por usar a calculadora. Até mais!\n");
 
     return 0;
 }
