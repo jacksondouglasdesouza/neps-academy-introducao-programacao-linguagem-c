@@ -5,11 +5,19 @@
 #include <locale.h>
 
 /*
+
     ================================================================================
     PROJETO: CALCULADORA SIMPLES EM C
     ================================================================================
 
-    Descrição:
+    * AUTOR:        Jackson Douglas de Souza
+    * DATA:         25 de agosto de 2025
+    * CURSO:        Introdução à Programação - Neps Academy
+    * GITHUB:       https://github.com/jacksondouglasdesouza
+    * LINKEDIN:     https://www.linkedin.com/in/jacksondouglasdsouza
+
+    ------------------------------------------------------------------------
+    DESCRIÇÃO:
     Neste projeto, você vai criar um programa de calculadora baseado em texto que
     funciona inteiramente no terminal. O programa exibirá um menu de opções para
     o usuário, permitindo que escolha uma operação matemática. Depois, o usuário
@@ -79,27 +87,64 @@
         (opção 5 no menu ou 'n' após uma operação).
 */
 
-double soma(double a, double b) {
-    return a + b;
-}
+// ================================================================================
+// FUNÇÕES MATEMÁTICAS BÁSICAS
+// ================================================================================
 
-double subtracao(double a, double b) {
-    return a - b;
-}
+/**
+ * @brief Realiza a soma de dois números.
+ * @param a O primeiro número.
+ * @param b O segundo número.
+ * @return O resultado da soma.
+ */
+double soma(double a, double b) { return a + b; }
 
-double multiplicacao(double a, double b) {
-    return a * b;
-}
+/**
+ * @brief Realiza a subtração de dois números.
+ * @param a O primeiro número.
+ * @param b O segundo número.
+ * @return O resultado da subtração.
+ */
+double subtracao(double a, double b) { return a - b; }
 
-double divisao(double a, double b) {
-    return a / b;
-}
+/**
+ * @brief Realiza a multiplicação de dois números.
+ * @param a O primeiro número.
+ * @param b O segundo número.
+ * @return O resultado da multiplicação.
+ */
+double multiplicacao(double a, double b) { return a * b; }
 
+/**
+ * @brief Realiza a divisão de dois números.
+ * @param a O primeiro número (dividendo).
+ * @param b O segundo número (divisor).
+ * @return O resultado da divisão.
+ */
+double divisao(double a, double b) { return a / b; }
+
+
+// ================================================================================
+// FUNÇÕES AUXILIARES
+// ================================================================================
+
+/**
+ * @brief Limpa o buffer de entrada do teclado (stdin).
+ * @details Esta função é crucial para consumir caracteres extras que sobram após
+ * leituras com scanf, como o 'Enter' (\n), evitando que eles
+ * interfiram nas próximas leituras de dados.
+ */
 void limpezaBuffer(){
     int clean;
     while((clean = getchar()) != '\n' && clean != EOF){}
 }
 
+
+/**
+ * @brief Limpa a tela do terminal.
+ * @details Utiliza compilação condicional para ser compatível com diferentes
+ * sistemas operacionais. Usa "cls" no Windows e "clear" no Linux/Mac.
+ */
 void limparTela() {
     #ifdef _WIN32
         system("cls");
@@ -108,59 +153,71 @@ void limparTela() {
     #endif
 }
 
+/**
+ * @brief Lê um número do tipo double do usuário de forma segura e robusta.
+ * @param mensagem A mensagem a ser exibida para o usuário (ex: "Digite um número:").
+ * @return O número válido digitado pelo usuário.
+ */
+double entradaNumero(const char* mensagem){
 
-/* Buscar Correção para a função na próxima versão, descansar por hoje chega!
-
-double EntradaNumero(const char* mensagem) {
-    char buffer[100];
     double numero;
-    char *pontoFinal;
+    char buffer[100]; // Armazena temporariamente a entrada do usuário como texto.
+    char *pontoFinal; // Ponteiro para verificar onde a conversão de string para número parou.
 
+    // Loop infinito que só é quebrado quando um número válido é digitado.
     while(1){
-        printf("%s", mensagem);
+    printf("%s", mensagem);
 
-        if(fgets(buffer, sizeof(buffer), stdin) == NULL){
-            printf("Erro na leitura. Tente novamente.\n");
-            continue;
-        }
-
-        buffer[strcspn(buffer, "\n")] = 0; 
-
-        char *ponteiroVirgula = strchr(buffer, ',');
-
-        if(ponteiroVirgula != NULL){
-            char bufferLimpo[100];
-            int j = 0;
-
-            for(int i = 0; buffer[i] != '\0'; i++){
-                if(buffer[i] != '.'){
-                    if(buffer[i] == ','){
-                        bufferLimpo[j++] = '.';
-                    } else {
-                        bufferLimpo[j++] = buffer[i];
-                    }
-                }
-            }
-        }
-
-        bufferLimpo[j] = '\0';
-
-        if(bufferLimpo[0] != '\0' && *pontoFinal == '\0'){
-            return numero;
-        } else {
-            numero = strtod(buffer, &pontoFinal);
-
-            if(buffer[0] != '\0' && *pontoFinal == '\0'){
-                return numero;
-            }
-        }
-        printf("Entrada invalida. Por favor, insira um numero valido.\n");
+    // Lê a linha inteira digitada pelo usuário de forma segura com fgets. Prevenindo problemas de buffer overflow.
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL){
+        printf("Erro na leitura de dados!\n");
+        continue;
     }
-    
-} */
 
-//-- Função Principal
+    // VERIFICAÇÃO DE ESTOURO DE BUFFER //
+    // Se o caractere '\n' (Enter) não foi encontrado, significa que a entrada do usuário era maior que o buffer.
+    if(strchr(buffer, '\n') == NULL){
+        printf("Entrada muito longa. Por favor, insira um número válido.\n");
+        limpezaBuffer();
+        continue;
+    }
 
+    // Remove o caractere '\n' (Enter) do final da string lida pelo fgets.
+    buffer[strcspn(buffer, "\n")] = 0;
+
+    // Permite que o usuário use vírgula como separador decimal, convertendo para ponto, que é o padrão da linguagem C.
+    for(int i = 0; buffer[i] != '\0'; i++){
+        if(buffer[i] == ','){
+            buffer[i] = '.';
+        }
+
+    }
+
+    // Troca de localidade: Muda temporariamente para o padrão "C" (americano) para garantir que strtod reconheça o '.' como separador decimal.
+    setlocale(LC_NUMERIC, "C");
+
+    // Converte a string para um número double.
+    numero = strtod(buffer, &pontoFinal);
+
+    // Restaura a localidade original para o restante do programa.
+    setlocale(LC_NUMERIC, "pt_BR.UTF-8");
+
+
+    // VALIDAÇÃO FINAL //
+    // Se a string não estava vazia e strtod conseguiu converter a string INTEIRA (pontoFinal aponta para o fim da string, '\0'), então o número é válido.
+    if(buffer[0] != '\0' && *pontoFinal == '\0'){
+        return numero;
+    } else {
+        printf("Entrada inválida. Por favor, insira um número válido.\n");
+    }
+
+    }
+
+}
+
+// ================================================================================
+// FUNÇÃO PRINCIPAL
+// ================================================================================
 
 int main(void) {
 
@@ -188,7 +245,6 @@ int main(void) {
         if(scanf("%d", &opcao) != 1){
             printf("Entrada inválida. Por favor, insira um número entre 1 e 5.\n");
             limpezaBuffer();
-            //opcao = 0;
             printf("Pressione Enter para continuar...");
             getchar();
             continue;
@@ -208,8 +264,8 @@ int main(void) {
             getchar();
         } else {
 
-            numero1 = EntradaNumero("Digite o primeiro numero: \n");
-            numero2 = EntradaNumero("Digite o segundo numero: \n");
+            numero1 = entradaNumero("Digite o primeiro numero: \n");
+            numero2 = entradaNumero("Digite o segundo numero: \n");
 
             switch(opcao){
                 case 1:
@@ -231,28 +287,27 @@ int main(void) {
             }
         }
         
-        //-- 
 
-            char respostaParaContinuar;
+        char respostaParaContinuar;
 
-            do{
-                printf("Deseja realizar outra operação? (s/n): \n");
+        do{
+            printf("Deseja realizar outra operação? (s/n): \n");
 
-                scanf(" %c", &respostaParaContinuar);
-                limpezaBuffer();
+            scanf(" %c", &respostaParaContinuar);
+            limpezaBuffer();
 
-                respostaParaContinuar = tolower(respostaParaContinuar);
+            respostaParaContinuar = tolower(respostaParaContinuar);
 
-                if(respostaParaContinuar == 's' || respostaParaContinuar == 'n'){
-                    continuar = respostaParaContinuar;
-                } else{
-                    printf("Resposta inválida. Digite 's' para sim ou 'n' para não.\n");
-                }
-            } while(respostaParaContinuar != 's' && respostaParaContinuar != 'n');
+            if(respostaParaContinuar == 's' || respostaParaContinuar == 'n'){
+                continuar = respostaParaContinuar;
+            } else{
+                printf("Resposta inválida. Digite 's' para sim ou 'n' para não.\n");
+            }
+        } while(respostaParaContinuar != 's' && respostaParaContinuar != 'n');
 
     } while (continuar == 's');
 
-    printf("Obrigado por usar a calculadora. Até mais!\n");
+    printf("Obrigado por usar a calculadora. Até a próxima!\n");
 
     return 0;
 }
