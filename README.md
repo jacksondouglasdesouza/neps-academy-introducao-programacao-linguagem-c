@@ -1,4 +1,6 @@
 ## 💻 Introdução à Programação – Neps Academy
+![Linguagem C](https://img.shields.io/badge/Linguagem-C-blue.svg)
+![Status](https://img.shields.io/badge/Status-%20complete-blue.svg)
 
 Neste curso **Introdução à Programação** da Neps Academy, aprendi os conceitos fundamentais da computação e os primeiros passos em programação com a linguagem C.
 
